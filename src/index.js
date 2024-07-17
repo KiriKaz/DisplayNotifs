@@ -28,17 +28,30 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 
 	class DisplayNotifs extends Plugin {
 
-		handleMessageCreateEvent({message}) {
-			console.log(message)
+		handleMessageCreateEvent(data) {
+			const [ authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo ] = data
+			Dispatcher.dispatch({
+				type: 'dn_add_notif',
+				data: { authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }
+			})
+
+			setTimeout(() => {
+				Dispatcher.dispatch( {
+					type: 'dn_del_notif',
+					data: notifInfo.message_id
+				});
+			}, 10000);
+			// TODO: change the way this works
 		}
 
 		onStart() {
-			Dispatcher.subscribe("MESSAGE_CREATE", this.handleMessageCreateEvent)
+			const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
+			Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data))
 			DOMTools.addStyle("displaynotifs", styles);
 		}
 
 		onStop() {
-			Dispatcher.unsubscribe("MESSAGE_CREATE", this.handleMessageCreateEvent)
+			Patcher.unpatchAll()
 			DOMTools.removeStyle("displaynotifs");
 		}
 	}
