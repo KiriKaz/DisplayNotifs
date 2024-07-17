@@ -26,24 +26,18 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 	const { DiscordModules } = Library;
 	const { Dispatcher } = DiscordModules;
 
-	const tag = "DisplayNotifs";
 	class DisplayNotifs extends Plugin {
-		// constructor() {
-		// 	super(configPatch)
-		// }
 
 		handleMessageCreateEvent({message}) {
 			console.log(message)
 		}
 
 		onStart() {
-			// Patcher.before(tag)
 			Dispatcher.subscribe("MESSAGE_CREATE", this.handleMessageCreateEvent)
 			DOMTools.addStyle("displaynotifs", styles);
 		}
 
 		onStop() {
-			// Patcher.unpatchAll(tag);
 			Dispatcher.unsubscribe("MESSAGE_CREATE", this.handleMessageCreateEvent)
 			DOMTools.removeStyle("displaynotifs");
 		}
