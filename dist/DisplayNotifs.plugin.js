@@ -2,9 +2,9 @@
  * @name DisplayNotifs
  * @description BD plugin to show notifications that the OS may have missed.
  * @author Midori
+ * @version 1.0.0
  * @source https://raw.githubusercontent.com/KiriKaz/DisplayNotifs/master/dist/DisplayNotifs.plugin.js
  * @updateUrl https://raw.githubusercontent.com/KiriKaz/DisplayNotifs/master/dist/DisplayNotifs.plugin.js
- * @version 1.0.0
  * @website https://github.com/KiriKaz/DisplayNotifs
  */
 var __defProp = Object.defineProperty;
@@ -39,7 +39,6 @@ var styles_default = "#DNMainElement {\r\n	position: absolute;\r\n	bottom: 100px
 var pluginMeta_default = {
   info: {
     name: "DisplayNotifs",
-    description: "BD plugin to show notifications that the OS may have missed.",
     authors: [{
       name: "Midori",
       discord_id: "109122112643440640",
@@ -56,6 +55,14 @@ var pluginMeta_default = {
 
 // package.json
 var version = "1.0.0";
+var description = "BD plugin to show notifications that the OS may have missed.";
+
+// src/actionTypes.js
+var ACTION_TYPES = {
+  addNotif: "DN_ADD_NOTIF",
+  delNotif: "DN_DEL_NOTIF",
+  resetNotifs: "DN_RESET_NOTIF"
+};
 
 // src/notifStore.js
 var { DiscordModules } = ZLibrary;
@@ -121,11 +128,11 @@ var NotificationView = () => {
   };
   const generalClick = (interactionInfo) => {
     const message_id = interactionInfo.tag;
-    Dispatcher2.dispatch({ type: "dn_del_notif", data: message_id });
+    Dispatcher2.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
     interactionInfo.onClick();
   };
   const closerClick = (message_id) => {
-    Dispatcher2.dispatch({ type: "dn_del_notif", data: message_id });
+    Dispatcher2.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
   };
   return /* @__PURE__ */ BdApi.React.createElement("div", { id: "DNMainElement" }, notifs != [] && notifs.map(({ authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }) => /* @__PURE__ */ BdApi.React.createElement(
     Notification,
@@ -142,7 +149,8 @@ var NotificationView = () => {
 // src/index.js
 var configPatch = {
   ...pluginMeta_default,
-  version
+  version,
+  description
 };
 var Dummy = class {
   constructor() {
@@ -165,33 +173,52 @@ var src_default = !global.ZeresPluginLibrary ? Dummy : (
       handleMessageCreateEvent(data) {
         const [authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo] = data;
         Dispatcher2.dispatch({
-          type: "dn_add_notif",
+          type: ACTION_TYPES.addNotif,
           data: { authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }
         });
         setTimeout(() => {
           Dispatcher2.dispatch({
-            type: "dn_del_notif",
+            type: ACTION_TYPES.delNotif,
             data: notifInfo.message_id
           });
         }, 1e4);
       }
       element = DOMTools.createElement('<div id="DNMainElementParent" />');
-      onStart() {
-        const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
-        Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data));
-        Dispatcher2.subscribe("dn_reset_notif", NotifHandler.resetNotifs);
-        Dispatcher2.subscribe("dn_add_notif", NotifHandler.createNotif);
-        Dispatcher2.subscribe("dn_del_notif", NotifHandler.deleteNotif);
+      dispatchSubscribe() {
+        Dispatcher2.subscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
+        Dispatcher2.subscribe(ACTION_TYPES.delNotif, NotifHandler.createNotif);
+        Dispatcher2.subscribe(ACTION_TYPES.addNotif, NotifHandler.deleteNotif);
+      }
+      dispatchUnsubscribe() {
+        Dispatcher2.unsubscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
+        Dispatcher2.unsubscribe(ACTION_TYPES.delNotif, NotifHandler.createNotif);
+        Dispatcher2.unsubscribe(ACTION_TYPES.addNotif, NotifHandler.deleteNotif);
+      }
+      addStyles() {
         DOMTools.addStyle("displaynotifs", styles_default);
+      }
+      removeStyles() {
+        DOMTools.removeStyle("displaynotifs");
+      }
+      mountAndRender() {
         DOMTools.Q("#app-mount").append(this.element);
         BdApi.ReactDOM.render(/* @__PURE__ */ BdApi.React.createElement(NotificationView, null), this.element);
       }
+      unmountAndRemove() {
+        this.element.destroy();
+      }
+      onStart() {
+        const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
+        Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data));
+        this.dispatchSubscribe();
+        this.addStyles();
+        this.mountAndRender();
+      }
       onStop() {
         Patcher.unpatchAll();
-        Dispatcher2.unsubscribe("dn_reset_notif", NotifHandler.resetNotifs);
-        Dispatcher2.unsubscribe("dn_add_notif", NotifHandler.createNotif);
-        Dispatcher2.unsubscribe("dn_del_notif", NotifHandler.deleteNotif);
-        DOMTools.removeStyle("displaynotifs");
+        this.dispatchUnsubscribe();
+        this.removeStyles();
+        this.unmountAndRemove();
       }
     }
     return DisplayNotifs;

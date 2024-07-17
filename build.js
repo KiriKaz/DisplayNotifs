@@ -6,30 +6,42 @@ const esbuild = require('esbuild');
 const buildMeta = (pluginMeta, packageMeta) => {
 	let outString = [];
 
-	outString.push("/**");
-
 	const info = pluginMeta.info
+
+	const pluginMetaOut = {}
 
 	for(const [key, value] of Object.entries(info)) {
 		switch(key) {
 		case "authors":
-			outString.push(` * @author ${value.map(a => a.name).join(", ")}`);
+			pluginMetaOut['author'] = value.map(a => a.name).join(", ");
 			continue;
 		case "github_raw":
-			outString.push(` * @source ${value}`);
-			outString.push(` * @updateUrl ${value}`);
+			pluginMetaOut['source'] = value;
+			pluginMetaOut['updateUrl'] = value;
 			continue;
 		case "version":
 			continue;
 		default:
-			outString.push(` * @${key} ${value}`);
+			pluginMetaOut[key] = value;
 		}
 	}
 
-	outString.push(` * @description ${packageMeta.description}`);
+	pluginMetaOut['description'] = packageMeta.description;
+	pluginMetaOut['version'] = packageMeta.version;
+	pluginMetaOut['website'] = packageMeta.repository;
 
-	outString.push(` * @version ${packageMeta.version}`);
-	outString.push(` * @website ${packageMeta.repository}`);
+	outString.push("/**");
+
+	['name', 'description', 'author', 'version', 'source', 'updateUrl', 'website'].forEach(key => {
+		outString.push(` * @${key} ${pluginMetaOut[key]}`);
+		delete pluginMetaOut[key];
+	})
+
+	if(Object.keys(pluginMetaOut).length > 0) {
+		for(const [key, value] of Object.entries(pluginMetaOut)) {
+			outString.push(` * @${key} ${value}`);
+		}
+	}
 
 	outString.push(" */");
 
