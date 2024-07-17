@@ -1,6 +1,8 @@
 const pluginMeta = require('./pluginMeta.json');
 const packageMeta = require('./package.json');
 
+const esbuild = require('esbuild');
+
 const buildMeta = (pluginMeta, packageMeta) => {
 	let outString = [];
 
@@ -32,7 +34,7 @@ const buildMeta = (pluginMeta, packageMeta) => {
 	return outString.join("\n");
 };
 
-require('esbuild').build({
+esbuild.build({
 	entryPoints: ['src/index.js'],
 	platform: "node",
 	bundle: true,
@@ -41,7 +43,13 @@ require('esbuild').build({
 	logLevel: "info",
 	banner: {
 		js: buildMeta(pluginMeta, packageMeta)
-	}
+	},
+	loader: {
+		'.js': 'jsx',
+		'.css': 'text'
+	},
+	inject: ['./src/styles.css'],
+	jsxFactory: "BdApi.React.createElement",
 })
 .then(() => {
 	// console.log('DN built.')
