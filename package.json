@@ -1,0 +1,10 @@
+{
+  "name": "displaynotifs",
+  "version": "0.0.1",
+  "description": "BD plugin to show notifications that the OS may have missed.",
+  "main": "src/index.js",
+  "repository": "https://github.com/KiriKaz/DisplayNotifs",
+  "author": "KiriKaz <igkepsi@gmail.com>",
+  "license": "MIT",
+  "private": false
+}
