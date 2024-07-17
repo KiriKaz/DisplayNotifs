@@ -1,7 +1,6 @@
 {
 	"info": {
 		"name": "DisplayNotifs",
-		"description": "BD plugin to show notifications that the OS may have missed.",
 		"authors": [{
 			"name": "Midori",
 			"discord_id": "109122112643440640",

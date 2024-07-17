@@ -26,6 +26,8 @@ const buildMeta = (pluginMeta, packageMeta) => {
 		}
 	}
 
+	outString.push(` * @description ${packageMeta.description}`);
+
 	outString.push(` * @version ${packageMeta.version}`);
 	outString.push(` * @website ${packageMeta.repository}`);
 
