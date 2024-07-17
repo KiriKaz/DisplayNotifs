@@ -18,7 +18,7 @@ export const NotificationView = () => {
 	}, [])
 
 	const onNotif = () => {
-		console.log(NotifHandler.notifs)
+		// console.log(NotifHandler.notifs)
 		setNotifs([...NotifHandler.notifs]);
 	}
 
