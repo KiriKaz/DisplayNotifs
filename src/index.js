@@ -5,10 +5,11 @@
 import config from '../pluginMeta.json';
 import { version } from '../package.json';
 
-import styles from './styles.css'
+import { ACTION_TYPES } from './actionTypes';
 import { NotifHandler } from './notifStore';
 import { NotificationView } from './components/notificationView';
 
+import styles from './styles.css'
 const configPatch = {
 	...config,
 	version
@@ -34,13 +35,13 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 		handleMessageCreateEvent(data) {
 			const [ authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo ] = data
 			Dispatcher.dispatch({
-				type: 'dn_add_notif',
+				type: ACTION_TYPES.addNotif,
 				data: { authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }
 			})
 
 			setTimeout(() => {
 				Dispatcher.dispatch( {
-					type: 'dn_del_notif',
+					type: ACTION_TYPES.delNotif,
 					data: notifInfo.message_id
 				});
 			}, 10000);

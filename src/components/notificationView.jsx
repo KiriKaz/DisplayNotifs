@@ -1,5 +1,6 @@
 import { Notification } from './notification';
 import { store as notifStore, NotifHandler } from '../notifStore';
+import { ACTION_TYPES } from '../actionTypes';
 
 export const NotificationView = () => {
 	const { DiscordModules } = ZLibrary;
@@ -23,12 +24,12 @@ export const NotificationView = () => {
 
 	const generalClick = (interactionInfo) => {
 		const message_id = interactionInfo.tag;
-		Dispatcher.dispatch({ type: 'dn_del_notif', data: message_id })
+		Dispatcher.dispatch({ type: ACTION_TYPES.delNotif, data: message_id })
 		interactionInfo.onClick();
 	}
 
 	const closerClick = (message_id) => {
-		Dispatcher.dispatch({ type: 'dn_del_notif', data: message_id })
+		Dispatcher.dispatch({ type: ACTION_TYPES.delNotif, data: message_id })
 	}
 
 	return (
