@@ -70,19 +70,28 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 			DOMTools.removeStyle("displaynotifs");
 		}
 
+		mountAndRender() {
+			DOMTools.Q("#app-mount").append(this.element);
+			BdApi.ReactDOM.render(<NotificationView />, this.element);
+		}
+
+		unmountAndRemove() {
+			this.element.destroy()
+		}
+
 		onStart() {
 			const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
 			Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data)); // still hacky - figure out how this works!
 			this.dispatchSubscribe();
 			this.addStyles();
-			DOMTools.Q("#app-mount").append(this.element);
-			BdApi.ReactDOM.render(<NotificationView />, this.element);
+			this.mountAndRender();
 		}
 
 		onStop() {
 			Patcher.unpatchAll();
 			this.dispatchUnsubscribe();
 			this.removeStyles();
+			this.unmountAndRemove();
 		}
 	}
 
