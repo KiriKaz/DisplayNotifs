@@ -123,7 +123,6 @@ var NotificationView = () => {
     return () => store.removeChangeListener(onNotif);
   }, []);
   const onNotif = () => {
-    console.log(NotifHandler.notifs);
     setNotifs([...NotifHandler.notifs]);
   };
   const generalClick = (interactionInfo) => {
@@ -186,13 +185,13 @@ var src_default = !global.ZeresPluginLibrary ? Dummy : (
       element = DOMTools.createElement('<div id="DNMainElementParent" />');
       dispatchSubscribe() {
         Dispatcher2.subscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
-        Dispatcher2.subscribe(ACTION_TYPES.delNotif, NotifHandler.createNotif);
-        Dispatcher2.subscribe(ACTION_TYPES.addNotif, NotifHandler.deleteNotif);
+        Dispatcher2.subscribe(ACTION_TYPES.addNotif, NotifHandler.createNotif);
+        Dispatcher2.subscribe(ACTION_TYPES.delNotif, NotifHandler.deleteNotif);
       }
       dispatchUnsubscribe() {
         Dispatcher2.unsubscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
-        Dispatcher2.unsubscribe(ACTION_TYPES.delNotif, NotifHandler.createNotif);
-        Dispatcher2.unsubscribe(ACTION_TYPES.addNotif, NotifHandler.deleteNotif);
+        Dispatcher2.unsubscribe(ACTION_TYPES.addNotif, NotifHandler.createNotif);
+        Dispatcher2.unsubscribe(ACTION_TYPES.delNotif, NotifHandler.deleteNotif);
       }
       addStyles() {
         DOMTools.addStyle("displaynotifs", styles_default);

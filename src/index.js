@@ -38,7 +38,7 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 			Dispatcher.dispatch({
 				type: ACTION_TYPES.addNotif,
 				data: { authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }
-			})
+			});
 
 			setTimeout(() => {
 				Dispatcher.dispatch( {
@@ -53,14 +53,14 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 
 		dispatchSubscribe() {
 			Dispatcher.subscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
-			Dispatcher.subscribe(ACTION_TYPES.delNotif, NotifHandler.createNotif);
-			Dispatcher.subscribe(ACTION_TYPES.addNotif, NotifHandler.deleteNotif);
+			Dispatcher.subscribe(ACTION_TYPES.addNotif, NotifHandler.createNotif);
+			Dispatcher.subscribe(ACTION_TYPES.delNotif, NotifHandler.deleteNotif);
 		}
 
 		dispatchUnsubscribe() {
 			Dispatcher.unsubscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
-			Dispatcher.unsubscribe(ACTION_TYPES.delNotif, NotifHandler.createNotif);
-			Dispatcher.unsubscribe(ACTION_TYPES.addNotif, NotifHandler.deleteNotif);
+			Dispatcher.unsubscribe(ACTION_TYPES.addNotif, NotifHandler.createNotif);
+			Dispatcher.unsubscribe(ACTION_TYPES.delNotif, NotifHandler.deleteNotif);
 		}
 
 		addStyles() {
