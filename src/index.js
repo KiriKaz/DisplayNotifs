@@ -6,6 +6,9 @@ import config from '../pluginMeta.json';
 import { version } from '../package.json';
 
 import styles from './styles.css'
+import { NotifHandler } from './notifStore';
+import { NotificationView } from './components/notificationView';
+
 const configPatch = {
 	...config,
 	version
@@ -23,7 +26,7 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
  */
 ([Plugin, Library]) => {
 
-	const { DiscordModules } = Library;
+	const { DiscordModules, DOMTools, Patcher } = Library;
 	const { Dispatcher } = DiscordModules;
 
 	class DisplayNotifs extends Plugin {
@@ -44,17 +47,29 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 			// TODO: change the way this works
 		}
 
+		element = DOMTools.createElement("<div id=\"DNMainElementParent\" />")
+
 		onStart() {
 			const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
 			Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data))
+			// Dispatcher.subscribe("MESSAGE_CREATE", this.handleMessageCreateEvent);
+			Dispatcher.subscribe('dn_reset_notif', NotifHandler.resetNotifs);
+			Dispatcher.subscribe('dn_add_notif', NotifHandler.createNotif);
+			Dispatcher.subscribe('dn_del_notif', NotifHandler.deleteNotif);
 			DOMTools.addStyle("displaynotifs", styles);
+			DOMTools.Q("#app-mount").append(this.element);
+			BdApi.ReactDOM.render(<NotificationView />, this.element);
 		}
 
 		onStop() {
 			Patcher.unpatchAll()
+			// Dispatcher.unsubscribe("MESSAGE_CREATE", this.handleMessageCreateEvent);
+			Dispatcher.unsubscribe('dn_reset_notif', NotifHandler.resetNotifs);
+			Dispatcher.unsubscribe('dn_add_notif', NotifHandler.createNotif);
+			Dispatcher.unsubscribe('dn_del_notif', NotifHandler.deleteNotif);
 			DOMTools.removeStyle("displaynotifs");
 		}
 	}
 
 	return DisplayNotifs;
-})(global.ZeresPluginLibrary.buildPlugin(configPatch))
+})(global.ZeresPluginLibrary.buildPlugin(configPatch));
