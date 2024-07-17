@@ -77,7 +77,7 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 		}
 
 		unmountAndRemove() {
-			this.element.destroy()
+			this.element.remove()
 		}
 
 		onStart() {

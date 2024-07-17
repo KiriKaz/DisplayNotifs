@@ -205,7 +205,7 @@ var src_default = !global.ZeresPluginLibrary ? Dummy : (
         BdApi.ReactDOM.render(/* @__PURE__ */ BdApi.React.createElement(NotificationView, null), this.element);
       }
       unmountAndRemove() {
-        this.element.destroy();
+        this.element.remove();
       }
       onStart() {
         const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
