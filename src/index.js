@@ -2,13 +2,13 @@
 // Specifically, lines 29-32 https://github.com/rauenzi/BDPluginLibrary/blob/master/lib/templates/built.js
 // This is done to initialize our plugin properly with the lib.
 
-const config = require('../pluginMeta.json');
-const pkg = require('../package.json');
+import config from '../pluginMeta.json';
+import { version } from '../package.json';
 
 import styles from './styles.css'
 const configPatch = {
 	...config,
-	version: pkg.version
+	version
 };
 
 class Dummy {
