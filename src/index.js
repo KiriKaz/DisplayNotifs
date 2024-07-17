@@ -49,25 +49,39 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 
 		element = DOMTools.createElement("<div id=\"DNMainElementParent\" />")
 
+		dispatchSubscribe() {
+			Dispatcher.subscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
+			Dispatcher.subscribe(ACTION_TYPES.delNotif, NotifHandler.createNotif);
+			Dispatcher.subscribe(ACTION_TYPES.addNotif, NotifHandler.deleteNotif);
+		}
+
+		dispatchUnsubscribe() {
+			Dispatcher.unsubscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
+			Dispatcher.unsubscribe(ACTION_TYPES.delNotif, NotifHandler.createNotif);
+			Dispatcher.unsubscribe(ACTION_TYPES.addNotif, NotifHandler.deleteNotif);
+		}
+
+		addStyles() {
+			DOMTools.addStyle("displaynotifs", styles);
+		}
+
+		removeStyles() {
+			DOMTools.removeStyle("displaynotifs");
+		}
+
 		onStart() {
 			const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
-			Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data))
-			// Dispatcher.subscribe("MESSAGE_CREATE", this.handleMessageCreateEvent);
-			Dispatcher.subscribe('dn_reset_notif', NotifHandler.resetNotifs);
-			Dispatcher.subscribe('dn_add_notif', NotifHandler.createNotif);
-			Dispatcher.subscribe('dn_del_notif', NotifHandler.deleteNotif);
-			DOMTools.addStyle("displaynotifs", styles);
+			Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data)); // still hacky - figure out how this works!
+			this.dispatchSubscribe();
+			this.addStyles();
 			DOMTools.Q("#app-mount").append(this.element);
 			BdApi.ReactDOM.render(<NotificationView />, this.element);
 		}
 
 		onStop() {
-			Patcher.unpatchAll()
-			// Dispatcher.unsubscribe("MESSAGE_CREATE", this.handleMessageCreateEvent);
-			Dispatcher.unsubscribe('dn_reset_notif', NotifHandler.resetNotifs);
-			Dispatcher.unsubscribe('dn_add_notif', NotifHandler.createNotif);
-			Dispatcher.unsubscribe('dn_del_notif', NotifHandler.deleteNotif);
-			DOMTools.removeStyle("displaynotifs");
+			Patcher.unpatchAll();
+			this.dispatchUnsubscribe();
+			this.removeStyles();
 		}
 	}
 
