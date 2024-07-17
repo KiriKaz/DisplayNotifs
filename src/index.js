@@ -17,7 +17,11 @@ class Dummy {
 	stop() {}
 }
 
-module.exports = !global.ZeresPluginLibrary ? Dummy : (([Plugin, Library]) => {
+export default !global.ZeresPluginLibrary ? Dummy: ( // lol
+/**
+ * @param {[import('zerespluginlibrary').Plugin, import('zerespluginlibrary').BoundAPI]}
+ */
+([Plugin, Library]) => {
 
 	const { DiscordModules } = Library;
 	const { Dispatcher } = DiscordModules;
