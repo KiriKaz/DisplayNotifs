@@ -1,6 +1,5 @@
 const pluginMeta = require('./pluginMeta.json');
 const packageMeta = require('./package.json');
-// const meta = require('zerespluginlibrary/lib/meta');
 
 const buildMeta = (pluginMeta, packageMeta) => {
 	let outString = [];
