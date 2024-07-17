@@ -3,7 +3,7 @@
 // This is done to initialize our plugin properly with the lib.
 
 import config from '../pluginMeta.json';
-import { version } from '../package.json';
+import { version, description } from '../package.json';
 
 import { ACTION_TYPES } from './actionTypes';
 import { NotifHandler } from './notifStore';
@@ -12,7 +12,8 @@ import { NotificationView } from './components/notificationView';
 import styles from './styles.css'
 const configPatch = {
 	...config,
-	version
+	version,
+	description
 };
 
 class Dummy {
