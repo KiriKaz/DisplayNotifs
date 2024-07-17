@@ -6,10 +6,12 @@
 			"name": "Midori",
 			"discord_id": "109122112643440640",
 			"github_username": "KiriKaz"
-		}]
+		}],
+    "github_raw": "https://raw.githubusercontent.com/KiriKaz/DisplayNotifs/master/dist/DisplayNotifs.plugin.js"
 	},
 	"changelog": [
 		{ "title": "Initializing", "items": [ "Starting to develop the plugin now." ] }
 	],
+	"defaultConfig": [],
 	"main": "src/index.js"
 }

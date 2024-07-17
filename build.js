@@ -9,15 +9,23 @@ const buildMeta = (pluginMeta, packageMeta) => {
 	const info = pluginMeta.info
 
 	for(const [key, value] of Object.entries(info)) {
-		if(key === "authors") {
+		switch(key) {
+		case "authors":
 			outString.push(` * @author ${value.map(a => a.name).join(", ")}`);
 			continue;
+		case "github_raw":
+			outString.push(` * @source ${value}`);
+			outString.push(` * @updateUrl ${value}`);
+			continue;
+		case "version":
+			continue;
+		default:
+			outString.push(` * @${key} ${value}`);
 		}
-		outString.push(` * @${key} ${value}`);
 	}
 
 	outString.push(` * @version ${packageMeta.version}`);
-	outString.push(` * @github ${packageMeta.repository}`);
+	outString.push(` * @website ${packageMeta.repository}`);
 
 	outString.push(" */");
 
