@@ -5,6 +5,7 @@
 const config = require('../pluginMeta.json');
 const pkg = require('../package.json');
 
+import styles from './styles.css'
 const configPatch = {
 	...config,
 	version: pkg.version
@@ -34,11 +35,13 @@ module.exports = !global.ZeresPluginLibrary ? Dummy : (([Plugin, Library]) => {
 		onStart() {
 			// Patcher.before(tag)
 			Dispatcher.subscribe("MESSAGE_CREATE", this.handleMessageCreateEvent)
+			DOMTools.addStyle("displaynotifs", styles);
 		}
 
 		onStop() {
 			// Patcher.unpatchAll(tag);
 			Dispatcher.unsubscribe("MESSAGE_CREATE", this.handleMessageCreateEvent)
+			DOMTools.removeStyle("displaynotifs");
 		}
 	}
 

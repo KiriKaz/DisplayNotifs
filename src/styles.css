@@ -1,0 +1,37 @@
+#DNMainElement {
+	position: absolute;
+	bottom: 100px;
+	right: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	/* background-color: blue; */
+	background: rgba(1.0, 1.0, 1.0, 0.3);
+	backdrop-filter: blur(2px);
+	color: white;
+	gap: 50px;
+}
+
+.DN-notification-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin: 5px;
+	padding: 10px;
+	/* background-color: red; */
+	min-width: 350px;
+	cursor: pointer;
+}
+
+.DN-notification-container .DN-author {
+
+}
+
+.DN-notification-container .DN-message {
+
+}
+
+.DN-notification-container .DN-closebutton {
+
+}
