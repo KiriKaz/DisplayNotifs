@@ -33,7 +33,7 @@ __export(src_exports, {
 module.exports = __toCommonJS(src_exports);
 
 // src/styles.css
-var styles_default = "#DNMainElement {\r\n	position: absolute;\r\n	bottom: 100px;\r\n	right: 80px;\r\n	display: flex;\r\n	align-items: center;\r\n	justify-content: center;\r\n	flex-direction: column;\r\n	/* background-color: blue; */\r\n	background: rgba(1.0, 1.0, 1.0, 0.3);\r\n	backdrop-filter: blur(2px);\r\n	color: white;\r\n	gap: 50px;\r\n}\r\n\r\n.DN-notification-container {\r\n	display: flex;\r\n	flex-direction: row;\r\n	justify-content: space-between;\r\n	margin: 5px;\r\n	padding: 10px;\r\n	/* background-color: red; */\r\n	min-width: 350px;\r\n	cursor: pointer;\r\n}\r\n\r\n.DN-notification-container .DN-author {\r\n\r\n}\r\n\r\n.DN-notification-container .DN-message {\r\n\r\n}\r\n\r\n.DN-notification-container .DN-closebutton {\r\n\r\n}";
+var styles_default = "#DNMainElement {\r\n	position: absolute;\r\n	bottom: 100px;\r\n	right: 80px;\r\n	display: flex;\r\n	align-items: center;\r\n	justify-content: center;\r\n	flex-direction: column;\r\n	/* background-color: blue; */\r\n	background: rgba(0, 0, 0, 0.3);\r\n	backdrop-filter: blur(2px);\r\n	color: white;\r\n	border-radius: 6px;\r\n	gap: 50px;\r\n}\r\n\r\n.DN-notification-container {\r\n	display: flex;\r\n	flex-direction: row;\r\n	justify-content: space-between;\r\n	margin: 5px;\r\n	padding: 10px;\r\n	/* background-color: red; */\r\n	min-width: 350px;\r\n	cursor: pointer;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost {\r\n	display: flex;\r\n	flex-direction: row;\r\n	justify-content: flex-start;\r\n	gap: 15px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-icon {\r\n	justify-content: center;\r\n	align-self: center;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-icon img {\r\n	width: 40px;\r\n	height: 40px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message {\r\n	display: flex;\r\n	flex-direction: column;\r\n	justify-content: space-around;\r\n	font-size: 0.8em;\r\n	color: rgba(225, 225, 225, 1.0);\r\n	gap: 5px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message .DN-author {\r\n	font-size: 1.0em;\r\n	color: rgba(225, 225, 225, 1.0);\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message .DN-message-content {\r\n	font-size: 1.25em;\r\n	color: rgba(250, 250, 250, 1.0);\r\n}\r\n\r\n.DN-notification-container .DN-closebutton {\r\n	align-self: center;\r\n	margin: 5px;\r\n}";
 
 // pluginMeta.json
 var pluginMeta_default = {
@@ -104,9 +104,12 @@ var NotifHandler = class _NotifHandler {
   // }
 };
 
+// src/icons/close-icon.svg
+var close_icon_default = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="%23e8eaed"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>';
+
 // src/components/notification.jsx
 var Notification = ({ author, messageContent, onGeneralClick, onCloserClick }) => {
-  return /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-notification-container", style: { cursor: "pointer" }, onClick: onGeneralClick }, /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-author" }, author.name), /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-message" }, messageContent), /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-closebutton", onClick: onCloserClick }, "closebutton"));
+  return /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-notification-container", style: { cursor: "pointer" }, onClick: onGeneralClick }, /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-leftmost" }, /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-icon" }, /* @__PURE__ */ BdApi.React.createElement("img", { src: author.icon })), /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-message" }, /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-author" }, author.name), /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-message-content" }, messageContent))), /* @__PURE__ */ BdApi.React.createElement("div", { className: "DN-closebutton", onClick: onCloserClick }, /* @__PURE__ */ BdApi.React.createElement("img", { src: close_icon_default })));
 };
 
 // src/components/notificationView.jsx
@@ -130,7 +133,8 @@ var NotificationView = () => {
     Dispatcher2.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
     interactionInfo.onClick();
   };
-  const closerClick = (message_id) => {
+  const closerClick = (message_id, e) => {
+    e.stopPropagation();
     Dispatcher2.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
   };
   return /* @__PURE__ */ BdApi.React.createElement("div", { id: "DNMainElement" }, notifs != [] && notifs.map(({ authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }) => /* @__PURE__ */ BdApi.React.createElement(
@@ -140,7 +144,7 @@ var NotificationView = () => {
       author: { name: authorDisplayName, icon: authorIcon },
       messageContent,
       onGeneralClick: () => generalClick(interactionInfo),
-      onCloserClick: () => closerClick(notifInfo.message_id)
+      onCloserClick: (e) => closerClick(notifInfo.message_id, e)
     }
   )));
 };

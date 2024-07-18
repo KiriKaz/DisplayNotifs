@@ -60,7 +60,8 @@ esbuild.build({
 	},
 	loader: {
 		'.js': 'jsx',
-		'.css': 'text'
+		'.css': 'text',
+		'.svg': 'dataurl'
 	},
 	inject: ['./src/styles.css'],
 	jsxFactory: "BdApi.React.createElement",

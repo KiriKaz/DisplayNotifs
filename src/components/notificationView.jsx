@@ -24,12 +24,13 @@ export const NotificationView = () => {
 
 	const generalClick = (interactionInfo) => {
 		const message_id = interactionInfo.tag;
-		Dispatcher.dispatch({ type: ACTION_TYPES.delNotif, data: message_id })
+		Dispatcher.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
 		interactionInfo.onClick();
 	}
 
-	const closerClick = (message_id) => {
-		Dispatcher.dispatch({ type: ACTION_TYPES.delNotif, data: message_id })
+	const closerClick = (message_id, e) => {
+		e.stopPropagation();
+		Dispatcher.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
 	}
 
 	return (
@@ -40,7 +41,7 @@ export const NotificationView = () => {
 					author={{ name: authorDisplayName, icon: authorIcon }}
 					messageContent={ messageContent }
 					onGeneralClick={() => generalClick(interactionInfo)}
-					onCloserClick={() => closerClick(notifInfo.message_id)}
+					onCloserClick={(e) => closerClick(notifInfo.message_id, e)}
 				/>))
 			}
 		</div>

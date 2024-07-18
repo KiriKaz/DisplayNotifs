@@ -7,9 +7,10 @@
 	justify-content: center;
 	flex-direction: column;
 	/* background-color: blue; */
-	background: rgba(1.0, 1.0, 1.0, 0.3);
+	background: rgba(0, 0, 0, 0.3);
 	backdrop-filter: blur(2px);
 	color: white;
+	border-radius: 6px;
 	gap: 50px;
 }
 
@@ -24,14 +25,43 @@
 	cursor: pointer;
 }
 
-.DN-notification-container .DN-author {
-
+.DN-notification-container .DN-leftmost {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	gap: 15px;
 }
 
-.DN-notification-container .DN-message {
+.DN-notification-container .DN-leftmost .DN-icon {
+	justify-content: center;
+	align-self: center;
+}
 
+.DN-notification-container .DN-leftmost .DN-icon img {
+	width: 40px;
+	height: 40px;
+}
+
+.DN-notification-container .DN-leftmost .DN-message {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	font-size: 0.8em;
+	color: rgba(225, 225, 225, 1.0);
+	gap: 5px;
+}
+
+.DN-notification-container .DN-leftmost .DN-message .DN-author {
+	font-size: 1.0em;
+	color: rgba(225, 225, 225, 1.0);
+}
+
+.DN-notification-container .DN-leftmost .DN-message .DN-message-content {
+	font-size: 1.25em;
+	color: rgba(250, 250, 250, 1.0);
 }
 
 .DN-notification-container .DN-closebutton {
-
+	align-self: center;
+	margin: 5px;
 }
