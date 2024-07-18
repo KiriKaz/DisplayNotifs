@@ -2,7 +2,7 @@
 
 This is a BetterDiscord plugin for displaying notifications within the confines of the program.
 
-[Support Discord](https://discord.gg/vPV2MDfQ)
+[Support Discord](https://discord.gg/KRwX5tKxYd)
 
 ### How to Install
 Copy `./dist/DisplayNotifs.plugin.js` to your BetterDiscord plugins folder.
