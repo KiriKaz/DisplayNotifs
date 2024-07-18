@@ -33,17 +33,16 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 
 	class DisplayNotifs extends Plugin {
 
-		handleMessageCreateEvent(data) {
-			const [ authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo ] = data
+		handleRPCNotifCreateEvent({ body: notificationBody, title: notificationTitle, icon: notificationIcon, message }) {
 			Dispatcher.dispatch({
 				type: ACTION_TYPES.addNotif,
-				data: { authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }
+				data: { authorIcon: notificationIcon, authorDisplayName: notificationTitle, messageContent: notificationBody, messageInfo: message }
 			});
 
 			setTimeout(() => {
 				Dispatcher.dispatch( {
 					type: ACTION_TYPES.delNotif,
-					data: notifInfo.message_id
+					data: messageInfo.message_id
 				});
 			}, 10000);
 			// TODO: change the way this works
@@ -52,12 +51,14 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 		element = DOMTools.createElement("<div id=\"DNMainElementParent\" />")
 
 		dispatchSubscribe() {
+			Dispatcher.subscribe("RPC_NOTIFICATION_CREATE", this.handleRPCNotifCreateEvent)
 			Dispatcher.subscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
 			Dispatcher.subscribe(ACTION_TYPES.addNotif, NotifHandler.createNotif);
 			Dispatcher.subscribe(ACTION_TYPES.delNotif, NotifHandler.deleteNotif);
 		}
 
 		dispatchUnsubscribe() {
+			Dispatcher.unsubscribe("RPC_NOTIFICATION_CREATE", this.handleRPCNotifCreateEvent)
 			Dispatcher.unsubscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
 			Dispatcher.unsubscribe(ACTION_TYPES.addNotif, NotifHandler.createNotif);
 			Dispatcher.unsubscribe(ACTION_TYPES.delNotif, NotifHandler.deleteNotif);
@@ -81,15 +82,12 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 		}
 
 		onStart() {
-			const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
-			Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data)); // still hacky - figure out how this works!
 			this.dispatchSubscribe();
 			this.addStyles();
 			this.mountAndRender();
 		}
 
 		onStop() {
-			Patcher.unpatchAll();
 			this.dispatchUnsubscribe();
 			this.removeStyles();
 			this.unmountAndRemove();

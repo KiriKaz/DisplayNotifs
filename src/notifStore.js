@@ -35,7 +35,7 @@ export class NotifHandler {
 	}
 
 	static deleteNotif(payload) {
-		NotifHandler.notifs = NotifHandler.notifs.filter(notif => notif.notifInfo.message_id !== payload.data)
+		NotifHandler.notifs = NotifHandler.notifs.filter(notif => notif.messageInfo.id !== payload.data)
 		store.emitChange()
 	}
 

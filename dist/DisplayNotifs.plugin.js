@@ -33,7 +33,7 @@ __export(src_exports, {
 module.exports = __toCommonJS(src_exports);
 
 // src/styles.css
-var styles_default = "#DNMainElement {\r\n	position: absolute;\r\n	bottom: 100px;\r\n	right: 80px;\r\n	display: flex;\r\n	align-items: flex-end;\r\n	justify-content: center;\r\n	flex-direction: column;\r\n	/* background-color: blue; */\r\n	color: white;\r\n	gap: 15px;\r\n}\r\n\r\n.DN-notification-container {\r\n	display: flex;\r\n	flex-direction: row;\r\n	justify-content: space-between;\r\n	margin: 5px;\r\n	padding: 15px;\r\n	/* background-color: red; */\r\n	min-width: 350px;\r\n	background: rgba(0, 0, 0, 0.3);\r\n	backdrop-filter: blur(2px);\r\n	border-radius: 6px;\r\n	cursor: pointer;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost {\r\n	display: flex;\r\n	flex-direction: row;\r\n	justify-content: flex-start;\r\n	gap: 15px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-icon {\r\n	justify-content: center;\r\n	align-self: center;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-icon img {\r\n	width: 40px;\r\n	height: 40px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message {\r\n	display: flex;\r\n	flex-direction: column;\r\n	justify-content: space-around;\r\n	font-size: 0.8em;\r\n	color: rgba(225, 225, 225, 1.0);\r\n	gap: 5px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message .DN-author {\r\n	font-size: 1.0em;\r\n	color: rgba(225, 225, 225, 1.0);\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message .DN-message-content {\r\n	font-size: 1.25em;\r\n	color: rgba(250, 250, 250, 1.0);\r\n}\r\n\r\n.DN-notification-container .DN-closebutton {\r\n	align-self: center;\r\n	margin: 5px;\r\n}";
+var styles_default = "#DNMainElement {\r\n	position: absolute;\r\n	bottom: 100px;\r\n	right: 80px;\r\n	display: flex;\r\n	align-items: flex-end;\r\n	justify-content: center;\r\n	flex-direction: column;\r\n	/* background-color: blue; */\r\n	color: white;\r\n	gap: 15px;\r\n}\r\n\r\n.DN-notification-container {\r\n	display: flex;\r\n	flex-direction: row;\r\n	justify-content: space-between;\r\n	margin: 5px;\r\n	padding: 15px;\r\n	/* background-color: red; */\r\n	min-width: 350px;\r\n	max-width: 40vw;\r\n	word-break: break-all;\r\n	background: rgba(0, 0, 0, 0.3);\r\n	backdrop-filter: blur(2px);\r\n	border-radius: 6px;\r\n	cursor: pointer;\r\n	z-index: 347;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost {\r\n	display: flex;\r\n	flex-direction: row;\r\n	justify-content: flex-start;\r\n	gap: 15px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-icon {\r\n	justify-content: center;\r\n	align-self: center;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-icon img {\r\n	width: 40px;\r\n	height: 40px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message {\r\n	display: flex;\r\n	flex-direction: column;\r\n	justify-content: space-around;\r\n	font-size: 0.8em;\r\n	color: rgba(225, 225, 225, 1.0);\r\n	gap: 5px;\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message .DN-author {\r\n	font-size: 1.0em;\r\n	color: rgba(225, 225, 225, 1.0);\r\n}\r\n\r\n.DN-notification-container .DN-leftmost .DN-message .DN-message-content {\r\n	font-size: 1.25em;\r\n	color: rgba(250, 250, 250, 1.0);\r\n}\r\n\r\n.DN-notification-container .DN-closebutton {\r\n	align-self: center;\r\n	margin: 5px;\r\n}";
 
 // pluginMeta.json
 var pluginMeta_default = {
@@ -90,7 +90,7 @@ var NotifHandler = class _NotifHandler {
     return newNotif;
   }
   static deleteNotif(payload) {
-    _NotifHandler.notifs = _NotifHandler.notifs.filter((notif) => notif.notifInfo.message_id !== payload.data);
+    _NotifHandler.notifs = _NotifHandler.notifs.filter((notif) => notif.messageInfo.id !== payload.data);
     store.emitChange();
   }
   static resetNotifs() {
@@ -128,23 +128,29 @@ var NotificationView = () => {
   const onNotif = () => {
     setNotifs([...NotifHandler.notifs]);
   };
-  const generalClick = (interactionInfo) => {
-    const message_id = interactionInfo.tag;
+  const navigateTo = (messageInfo2) => {
+    const message_id = messageInfo2.id;
+    const channel_id = messageInfo2.channel_id;
+    const guild_id = messageInfo2.guild_id ?? "@me";
+    ZLibrary.DiscordModules["NavigationUtils"].transitionTo(`/channels/${guild_id}/${channel_id}/${message_id}`);
+  };
+  const generalClick = (messageInfo2) => {
+    const message_id = messageInfo2.id;
     Dispatcher2.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
-    interactionInfo.onClick();
+    navigateTo(messageInfo2);
   };
   const closerClick = (message_id, e) => {
     e.stopPropagation();
     Dispatcher2.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
   };
-  return /* @__PURE__ */ BdApi.React.createElement("div", { id: "DNMainElement" }, notifs != [] && notifs.map(({ authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }) => /* @__PURE__ */ BdApi.React.createElement(
+  return /* @__PURE__ */ BdApi.React.createElement("div", { id: "DNMainElement" }, notifs != [] && notifs.map(({ authorIcon, authorDisplayName, messageContent, messageInfo: messageInfo2 }) => /* @__PURE__ */ BdApi.React.createElement(
     Notification,
     {
-      key: notifInfo.message_id,
+      key: messageInfo2.message_id,
       author: { name: authorDisplayName, icon: authorIcon },
       messageContent,
-      onGeneralClick: () => generalClick(interactionInfo),
-      onCloserClick: (e) => closerClick(notifInfo.message_id, e)
+      onGeneralClick: () => generalClick(messageInfo2),
+      onCloserClick: (e) => closerClick(messageInfo2.id, e)
     }
   )));
 };
@@ -173,26 +179,27 @@ var src_default = !global.ZeresPluginLibrary ? Dummy : (
     const { DiscordModules: DiscordModules2, DOMTools, Patcher } = Library;
     const { Dispatcher: Dispatcher2 } = DiscordModules2;
     class DisplayNotifs extends Plugin {
-      handleMessageCreateEvent(data) {
-        const [authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo] = data;
+      handleRPCNotifCreateEvent({ body: notificationBody, title: notificationTitle, icon: notificationIcon, message }) {
         Dispatcher2.dispatch({
           type: ACTION_TYPES.addNotif,
-          data: { authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }
+          data: { authorIcon: notificationIcon, authorDisplayName: notificationTitle, messageContent: notificationBody, messageInfo: message }
         });
         setTimeout(() => {
           Dispatcher2.dispatch({
             type: ACTION_TYPES.delNotif,
-            data: notifInfo.message_id
+            data: messageInfo.message_id
           });
         }, 1e4);
       }
       element = DOMTools.createElement('<div id="DNMainElementParent" />');
       dispatchSubscribe() {
+        Dispatcher2.subscribe("RPC_NOTIFICATION_CREATE", this.handleRPCNotifCreateEvent);
         Dispatcher2.subscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
         Dispatcher2.subscribe(ACTION_TYPES.addNotif, NotifHandler.createNotif);
         Dispatcher2.subscribe(ACTION_TYPES.delNotif, NotifHandler.deleteNotif);
       }
       dispatchUnsubscribe() {
+        Dispatcher2.unsubscribe("RPC_NOTIFICATION_CREATE", this.handleRPCNotifCreateEvent);
         Dispatcher2.unsubscribe(ACTION_TYPES.resetNotifs, NotifHandler.resetNotifs);
         Dispatcher2.unsubscribe(ACTION_TYPES.addNotif, NotifHandler.createNotif);
         Dispatcher2.unsubscribe(ACTION_TYPES.delNotif, NotifHandler.deleteNotif);
@@ -211,14 +218,11 @@ var src_default = !global.ZeresPluginLibrary ? Dummy : (
         this.element.remove();
       }
       onStart() {
-        const showNotifModule = BdApi.Webpack.getByKeys("showNotification", "requestPermission");
-        Patcher.before(showNotifModule, "showNotification", (_, data) => this.handleMessageCreateEvent(data));
         this.dispatchSubscribe();
         this.addStyles();
         this.mountAndRender();
       }
       onStop() {
-        Patcher.unpatchAll();
         this.dispatchUnsubscribe();
         this.removeStyles();
         this.unmountAndRemove();

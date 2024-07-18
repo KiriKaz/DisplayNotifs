@@ -22,10 +22,18 @@ export const NotificationView = () => {
 		setNotifs([...NotifHandler.notifs]);
 	}
 
-	const generalClick = (interactionInfo) => {
-		const message_id = interactionInfo.tag;
+	const navigateTo = (messageInfo) => {
+		const message_id = messageInfo.id;
+		const channel_id = messageInfo.channel_id;
+		const guild_id = messageInfo.guild_id ?? "@me"
+
+		ZLibrary.DiscordModules['NavigationUtils'].transitionTo(`/channels/${guild_id}/${channel_id}/${message_id}`);
+	}
+
+	const generalClick = (messageInfo) => {
+		const message_id = messageInfo.id;
 		Dispatcher.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
-		interactionInfo.onClick();
+		navigateTo(messageInfo);
 	}
 
 	const closerClick = (message_id, e) => {
@@ -35,13 +43,13 @@ export const NotificationView = () => {
 
 	return (
 		<div id="DNMainElement">
-			{ notifs != [] && notifs.map(({ authorIcon, authorDisplayName, messageContent, notifInfo, interactionInfo }) => (
+			{ notifs != [] && notifs.map(({ authorIcon, authorDisplayName, messageContent, messageInfo }) => (
 				<Notification
-					key={ notifInfo.message_id }
+					key={ messageInfo.message_id }
 					author={{ name: authorDisplayName, icon: authorIcon }}
 					messageContent={ messageContent }
-					onGeneralClick={() => generalClick(interactionInfo)}
-					onCloserClick={(e) => closerClick(notifInfo.message_id, e)}
+					onGeneralClick={() => generalClick(messageInfo)}
+					onCloserClick={(e) => closerClick(messageInfo.id, e)}
 				/>))
 			}
 		</div>
