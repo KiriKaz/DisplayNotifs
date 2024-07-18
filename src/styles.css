@@ -19,6 +19,8 @@
 	padding: 15px;
 	/* background-color: red; */
 	min-width: 350px;
+	max-width: 40vw;
+	word-break: break-all;
 	background: rgba(0, 0, 0, 0.3);
 	backdrop-filter: blur(2px);
 	border-radius: 6px;
