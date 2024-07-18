@@ -9,7 +9,7 @@
     "github_raw": "https://raw.githubusercontent.com/KiriKaz/DisplayNotifs/master/dist/DisplayNotifs.plugin.js"
 	},
 	"changelog": [
-		{ "title": "Initializing", "items": [ "Starting to develop the plugin now." ] }
+		{ "title": "Improvements", "items": [ "Replaced notification detection module - should handle streamer mode/disabling 'Desktop Notifications', etc", "Small styling changes" ] }
 	],
 	"defaultConfig": [],
 	"main": "src/index.js"

@@ -2,7 +2,7 @@
  * @name DisplayNotifs
  * @description BD plugin to show notifications that the OS may have missed.
  * @author Midori
- * @version 1.0.0
+ * @version 1.1.1
  * @source https://raw.githubusercontent.com/KiriKaz/DisplayNotifs/master/dist/DisplayNotifs.plugin.js
  * @updateUrl https://raw.githubusercontent.com/KiriKaz/DisplayNotifs/master/dist/DisplayNotifs.plugin.js
  * @website https://github.com/KiriKaz/DisplayNotifs
@@ -47,14 +47,14 @@ var pluginMeta_default = {
     github_raw: "https://raw.githubusercontent.com/KiriKaz/DisplayNotifs/master/dist/DisplayNotifs.plugin.js"
   },
   changelog: [
-    { title: "Initializing", items: ["Starting to develop the plugin now."] }
+    { title: "Improvements", items: ["Replaced notification detection module - should handle streamer mode/disabling 'Desktop Notifications', etc", "Small styling changes"] }
   ],
   defaultConfig: [],
   main: "src/index.js"
 };
 
 // package.json
-var version = "1.0.0";
+var version = "1.1.1";
 var description = "BD plugin to show notifications that the OS may have missed.";
 
 // src/actionTypes.js
@@ -128,29 +128,29 @@ var NotificationView = () => {
   const onNotif = () => {
     setNotifs([...NotifHandler.notifs]);
   };
-  const navigateTo = (messageInfo2) => {
-    const message_id = messageInfo2.id;
-    const channel_id = messageInfo2.channel_id;
-    const guild_id = messageInfo2.guild_id ?? "@me";
+  const navigateTo = (messageInfo) => {
+    const message_id = messageInfo.id;
+    const channel_id = messageInfo.channel_id;
+    const guild_id = messageInfo.guild_id ?? "@me";
     ZLibrary.DiscordModules["NavigationUtils"].transitionTo(`/channels/${guild_id}/${channel_id}/${message_id}`);
   };
-  const generalClick = (messageInfo2) => {
-    const message_id = messageInfo2.id;
+  const generalClick = (messageInfo) => {
+    const message_id = messageInfo.id;
     Dispatcher2.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
-    navigateTo(messageInfo2);
+    navigateTo(messageInfo);
   };
   const closerClick = (message_id, e) => {
     e.stopPropagation();
     Dispatcher2.dispatch({ type: ACTION_TYPES.delNotif, data: message_id });
   };
-  return /* @__PURE__ */ BdApi.React.createElement("div", { id: "DNMainElement" }, notifs != [] && notifs.map(({ authorIcon, authorDisplayName, messageContent, messageInfo: messageInfo2 }) => /* @__PURE__ */ BdApi.React.createElement(
+  return /* @__PURE__ */ BdApi.React.createElement("div", { id: "DNMainElement" }, notifs != [] && notifs.map(({ authorIcon, authorDisplayName, messageContent, messageInfo }) => /* @__PURE__ */ BdApi.React.createElement(
     Notification,
     {
-      key: messageInfo2.message_id,
+      key: messageInfo.message_id,
       author: { name: authorDisplayName, icon: authorIcon },
       messageContent,
-      onGeneralClick: () => generalClick(messageInfo2),
-      onCloserClick: (e) => closerClick(messageInfo2.id, e)
+      onGeneralClick: () => generalClick(messageInfo),
+      onCloserClick: (e) => closerClick(messageInfo.id, e)
     }
   )));
 };
@@ -187,7 +187,7 @@ var src_default = !global.ZeresPluginLibrary ? Dummy : (
         setTimeout(() => {
           Dispatcher2.dispatch({
             type: ACTION_TYPES.delNotif,
-            data: messageInfo.message_id
+            data: message.id
           });
         }, 1e4);
       }
