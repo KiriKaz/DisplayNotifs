@@ -42,7 +42,7 @@ export default !global.ZeresPluginLibrary ? Dummy: ( // lol
 			setTimeout(() => {
 				Dispatcher.dispatch( {
 					type: ACTION_TYPES.delNotif,
-					data: messageInfo.message_id
+					data: message.id
 				});
 			}, 10000);
 			// TODO: change the way this works
