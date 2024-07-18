@@ -23,6 +23,7 @@
 	backdrop-filter: blur(2px);
 	border-radius: 6px;
 	cursor: pointer;
+	z-index: 347;
 }
 
 .DN-notification-container .DN-leftmost {
